@@ -33,7 +33,7 @@ export function constructMetadata({
         },
       ],
     },
-    metadataBase: new URL('https://nftlook-lopatko.vercel.app'), // DON'T FORGET change this after deploy
+    metadataBase: new URL('https://next-tt-nftlook.vercel.app/'),
     ...(noIndex && {
       robots: {
         index: false,
