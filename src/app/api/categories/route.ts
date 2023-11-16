@@ -1,10 +1,8 @@
-import path from "path"
-import fs from "fs"
+import { store } from "@/redux/store"
 import { NextResponse } from "next/server"
 
 export async function GET() {
-  const dataPath = path.join(process.cwd(), 'src/lib', 'store.json')
-  const data = fs.readFileSync(dataPath, 'utf-8')
+  const categoriesFromStore = store.getState().categories.value.categories
 
-  return NextResponse.json(JSON.parse(data).categories)
+  return NextResponse.json(categoriesFromStore)
 }

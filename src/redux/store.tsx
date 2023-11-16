@@ -1,4 +1,4 @@
-import { configureStore } from '@reduxjs/toolkit'
+import { combineReducers, configureStore } from '@reduxjs/toolkit'
 import {
   persistStore,
   persistReducer,
@@ -11,6 +11,7 @@ import {
 } from 'redux-persist'
 import storage from 'redux-persist/lib/storage'
 import searchReducer from './slices/search'
+import categoriesReducer from './slices/categories'
 import { TypedUseSelectorHook, useSelector } from 'react-redux'
 
 const persistConfig = {
@@ -18,7 +19,12 @@ const persistConfig = {
   storage: storage
 }
 
-const persistedReducer = persistReducer(persistConfig, searchReducer)
+const rootReducer = combineReducers({
+  categories: categoriesReducer,
+  search: searchReducer
+})
+
+const persistedReducer = persistReducer(persistConfig, rootReducer)
 
 export const store = configureStore({
   reducer: persistedReducer,

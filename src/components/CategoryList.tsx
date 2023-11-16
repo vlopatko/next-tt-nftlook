@@ -10,9 +10,15 @@ import { useAppSelector } from '@/redux/store'
 import { Reorder } from 'framer-motion'
 import { cn } from '@/lib/utils'
 
-const CategoryList = ({ data }: { data: CategoryItemType[] }) => {
-  const [categories, setCategories] = useState<CategoryItemType[]>(data)
-  const [baseCategory, setBaseCategory] = useState<CategoryItemType>({
+const CategoryList = () => {
+  const categoriesFromStore = useAppSelector(
+    (state) => state.categories.value.categories
+  )
+  const searchFromStore = useAppSelector((state) => state.search.value.search)
+
+  const [categories, setCategories] =
+    useState<CategoryItemType[]>(categoriesFromStore)
+  const [baseCategory, _] = useState<CategoryItemType>({
     name: 'Other',
     status: true,
     id: 'base-category'
@@ -20,8 +26,6 @@ const CategoryList = ({ data }: { data: CategoryItemType[] }) => {
   const [tempCategory, setTempCategory] = useState<CategoryItemType | null>(
     null
   )
-
-  const search = useAppSelector((state) => state.value.search)
 
   const getPreparedData = ({
     data,
@@ -43,7 +47,7 @@ const CategoryList = ({ data }: { data: CategoryItemType[] }) => {
 
   const preparedData = getPreparedData({
     data: categories,
-    search: search
+    search: searchFromStore
   })
 
   const handleItemCheckedChange = (id: string) => {
@@ -74,32 +78,17 @@ const CategoryList = ({ data }: { data: CategoryItemType[] }) => {
   }
 
   const handleSaveChanges = async (category: CategoryItemType) => {
-    const { id, ...reqBody } = category
+    const { id } = category
     const isExist = categories.find((item) => item.id === id)
 
-    console.log(isExist, 'EXIST')
-    console.log(category, 'CATEGORY')
-
-    if (isExist) {
-      console.log('exist work')
-      await fetch(`/api/categories/${category.id}`, {
-        method: 'PUT',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(reqBody)
-      }).then((res) => res.json())
-    } else {
-      await fetch(`/api/categories/${category.id}`, {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(category)
-      }).then((res) => res.json())
-    }
+    await fetch(`/api/categories/${category.id}`, {
+      method: isExist ? 'PUT' : 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(category)
+    }).then((res) => res.json())
 
     await fetch('/api/categories', {
       method: 'GET',
@@ -109,7 +98,7 @@ const CategoryList = ({ data }: { data: CategoryItemType[] }) => {
       }
     })
       .then((res) => res.json())
-      .then((data) => setCategories(data.reverse()))
+      .then(setCategories)
       .finally(() => setTempCategory(null))
   }
 

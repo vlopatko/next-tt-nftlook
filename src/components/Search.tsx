@@ -7,7 +7,7 @@ import { useDispatch } from 'react-redux'
 import { setSearch } from '@/redux/slices/search'
 
 const Search = () => {
-  const search = useAppSelector((state) => state.value)
+  const search = useAppSelector((state) => state.search.value.search)
   const dispatch = useDispatch()
 
   return (
@@ -17,7 +17,7 @@ const Search = () => {
         onChange={(e) => dispatch(setSearch(e.target.value))}
         placeholder="Search"
         className="m-0 w-full border-none bg-inherit p-0 focus:outline-none"
-        value={search.search}
+        value={search as unknown as string}
       />
       <SearchIcon className="text-[var(--text-color)]" width={20} height={20} />
     </div>
